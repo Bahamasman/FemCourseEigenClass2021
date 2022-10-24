@@ -6,6 +6,8 @@ if (APPLE)
   target_compile_definitions(course_library PRIVATE MACOSX)
 endif()
 
+add_library(test_library STATIC test_main.cpp)
+target_link_libraries(test_library PUBLIC Catch2::Catch2)
 
 add_executable(TestEigen mainEigenTest.cpp)
 target_link_libraries (TestEigen course_library Eigen3::Eigen)
@@ -25,14 +27,17 @@ target_link_libraries (Calcstiff Eigen3::Eigen course_library)
 add_executable(Assemble mainAssemble.cpp)
 target_link_libraries (Assemble Eigen3::Eigen course_library)
 
+add_test(TestIntegrate TestIntegrate)
 add_executable(TestIntegrate TestIntegrate.cpp)
-target_link_libraries (TestIntegrate  PRIVATE course_library Eigen3::Eigen Catch2::Catch2)
+target_link_libraries (TestIntegrate  PRIVATE course_library Eigen3::Eigen Catch2::Catch2 test_library)
 
+add_test(TestGeom TestGeom)
 add_executable(TestGeom TestGeom.cpp)
-target_link_libraries (TestGeom  PRIVATE course_library Eigen3::Eigen Catch2::Catch2)
+target_link_libraries (TestGeom  PRIVATE course_library Eigen3::Eigen Catch2::Catch2 test_library)
 
+add_test(TestShape TestShape)
 add_executable(TestShape TestShape.cpp)
-target_link_libraries (TestShape PRIVATE course_library Eigen3::Eigen Catch2::Catch2)
+target_link_libraries (TestShape PRIVATE course_library Eigen3::Eigen Catch2::Catch2 test_library)
 
 add_executable(TestOneDProblem TestOneDProblem.cpp)
 target_link_libraries (TestOneDProblem  course_library Eigen3::Eigen)

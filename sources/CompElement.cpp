@@ -117,7 +117,7 @@ void CompElement::ComputeRequiredData(IntPointData &data, VecDouble &intpoint) c
 
     geoel->X(intpoint, data.x);
     geoel->GradX(intpoint, data.x, data.gradx);
-
+    
     data.detjac = 0.0;
     MatrixDouble jac(dim, dim);
     jac.setZero();
@@ -180,10 +180,25 @@ void CompElement::CalcStiff(MatrixDouble &ek, MatrixDouble &ef) const {
     ef.setZero();
 
     //+++++++++++++++++
-    // Please implement me
-    std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-    DebugStop();
-    //+++++++++++++++++
+    IntRule *intrule = this->GetIntRule();
+    int maxIntOrder = intrule->MaxOrder();
+    intrule->SetOrder(maxIntOrder);
+
+    IntPointData data;
+    this->InitializeIntPointData(data);
+    int nintpoints = intrule->NPoints();
+    
+    double weight = 0.;
+
+    for (int nint = 0; nint < nintpoints; nint++) {
+        intrule->Point(nint, data.ksi, weight);
+        this->ComputeRequiredData(data, data.ksi);
+        weight *= fabs(data.detjac);
+        this->GetMultiplyingCoeficients(data.coefs);
+        data.ComputeSolution();
+        material->Contribute(data, weight, ek, ef);
+    }
+
 }
 
 void CompElement::EvaluateError(std::function<void(const VecDouble &loc, VecDouble &val, MatrixDouble &deriv) > fp, VecDouble &errors) const {

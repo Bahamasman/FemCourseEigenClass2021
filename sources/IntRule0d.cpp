@@ -32,7 +32,7 @@ void IntRule0d::SetOrder(int order) {
     fOrder = order;  
     
     if (order != 0) {
-        DebugStop();
+        order = 0;
     }
 
     int npoints = 1;

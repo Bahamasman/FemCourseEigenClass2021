@@ -14,13 +14,30 @@ IntRuleQuad::IntRuleQuad(){
 }
 
 IntRuleQuad::IntRuleQuad(int order) {
-    std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-    DebugStop();
+    SetOrder(order);
+    //std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
+    //DebugStop();
 }
 
 void IntRuleQuad::SetOrder(int order) {
-    std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-    DebugStop();
+    //std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
+    fOrder = order;
+    if (order < 0 || order > MaxOrder()) {
+        DebugStop();
+    }
+    
+    int npoints = floor(((fOrder +1)/2)+1);
+    VecDouble aux(npoints);
+    fPoints.resize(npoints * npoints, 2);
+    fWeights.resize(npoints);
+    gaulegQuad(-1.,1.,aux,fWeights);
+    for (size_t i = 0; i < npoints*npoints; i++)
+    {
+        fPoints(i,0) = aux[i];
+        fPoints(i,1) = aux[i+ npoints*npoints];
+    }
+   
+
 }
 
 void IntRuleQuad::gaulegQuad(const double x1, const double x2, VecDouble &co, VecDouble &w) {

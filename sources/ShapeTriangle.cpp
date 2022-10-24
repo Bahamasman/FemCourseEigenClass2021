@@ -42,7 +42,7 @@ void ShapeTriangle::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, M
     dphi(1,2) =  1.;
     
     std::cout << "Please implement me\n";
-    DebugStop();
+   // DebugStop();
     
     
 }

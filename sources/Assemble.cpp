@@ -64,12 +64,47 @@ void Assemble::Compute(SparseMat &globmat, MatrixDouble &rhs) {
         MatrixDouble ef(nstate * nshape, 1);
         ek.setZero();
         ef.setZero();
-
+        
         cel->CalcStiff(ek, ef);
         
-        //+++++++++++++++++
-        std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-        DebugStop();
+        
+        int ndof = cel->NDOF();
+        int k = cel->NShapeFunctions();
+        
+        int icount = 0;
+        for (size_t idof = 0; idof < ndof; idof++)
+        {
+            DOF & dofi = cel->GetDOF(idof);
+            int64_t ifirst = dofi.GetFirstEquation();
+            int Neqi = dofi.GetNShape() * dofi.GetNState();
+            for (size_t i = 0; i < Neqi; i++)
+            {
+                rhs(ifirst+i,0) += ef(icount+i,0);
+            }
+            int jcount = 0;
+            for (size_t jdof = 0; jdof < ndof; jdof++)
+            {
+                DOF & dofj = cel->GetDOF(jdof);
+                int64_t jfirst = dofj.GetFirstEquation();
+                int Neqj = dofj.GetNShape() * dofj.GetNState();
+                for (size_t i = 0; i < Neqi; i++)
+                {
+                    for (size_t j = 0; j < Neqj; j++)
+                    {
+                        globmat.coeffRef(ifirst+i,jfirst+j) += ek(icount+i,jcount+j);
+                    }
+                    
+                }
+                jcount += Neqj;
+            }
+            icount += Neqi;
+            
+        }
+        
+        
+        //DebugStop();
         //+++++++++++++++++
     }
+    std::cout << "Matriz Global :" << globmat << std::endl;
+    std::cout << "RHS :" << rhs << std::endl;
 }

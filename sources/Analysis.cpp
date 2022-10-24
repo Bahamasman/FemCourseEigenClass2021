@@ -80,6 +80,7 @@ void Analysis::RunSimulation() {
     Solution = solver.solve(F); 
 
     std::cout << "Solution computed!" << std::endl;
+    std::cout << "Solution: " << Solution  << std::endl;
     
     int solsize = Solution.rows();
     VecDouble sol(solsize);

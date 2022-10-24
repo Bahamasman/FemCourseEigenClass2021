@@ -28,6 +28,7 @@
 #include "IntRule.h"
 #include "PostProcessTemplate.h"
 #include "Poisson.h"
+#include "VTKGeoMesh.h"
 
 using std::cout;
 using std::endl;
@@ -45,6 +46,8 @@ int main ()
 #endif
     read.Read(gmesh,filename);
 
+    VTKGeoMesh::PrintGMeshVTK(&gmesh,"mygeomesh.vtk");
+
     CompMesh cmesh(&gmesh);
     MatrixDouble perm(3,3);
     perm.setZero();
@@ -56,7 +59,7 @@ int main ()
     
     auto force = [](const VecDouble &x, VecDouble &res)
     {
-        res[0] = 1.;
+        res[0] = x[0];
     };
     mat1->SetForceFunction(force);
     MatrixDouble proj(1,1),val1(1,1),val2(1,1);
@@ -67,7 +70,7 @@ int main ()
     L2Projection *bc_point = new L2Projection(0,3,proj,val1,val2);
     std::vector<MathStatement *> mathvec = {0,mat1,bc_point,bc_linha};
     cmesh.SetMathVec(mathvec);
-    cmesh.SetDefaultOrder(2);
+    cmesh.SetDefaultOrder(1);
     cmesh.AutoBuild();
     cmesh.Resequence();
 
@@ -82,13 +85,23 @@ int main ()
     VecDouble errvec;
     errvec = AnalysisLoc.PostProcessError(std::cout, postprocess);
     
+    postprocess.AppendVariable("Sol");
+    postprocess.AppendVariable("DSol");
+    postprocess.AppendVariable("Flux");
+    postprocess.AppendVariable("Force");
+    postprocess.AppendVariable("SolExact");
+    postprocess.AppendVariable("DSolExact");
+    AnalysisLoc.PostProcessSolution("resultadodomarco.vtk", postprocess);
     
     return 0;
 }
 void exact(const VecDouble &point,VecDouble &val, MatrixDouble &deriv){
 
-    deriv(0,0) = 4-point[0];
-    val[0]=point[0]*(8.-point[0])/2.;
+    //deriv(0,0) = 4-point[0];
+    //val[0]=point[0]*(8.-point[0])/2.;
+    deriv(0,0) = 1. - 8.*cosh(point[0])/sinh(8.);
+    val[0]=point[0] - 8.*sinh(point[0])/sinh(8.);
+    
     return;
 }
 

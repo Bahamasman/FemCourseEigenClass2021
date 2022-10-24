@@ -20,14 +20,27 @@ IntRule1d::IntRule1d(){
 }
 
 IntRule1d::IntRule1d(int order) : IntRule(order) {
-    std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-    DebugStop();
+    SetOrder(order);
+    //DebugStop();
 }
 
 void IntRule1d::SetOrder(int order) {
     fOrder = order;
-    std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-    DebugStop();
+    if (order < 0 || order > MaxOrder()) {
+        DebugStop();
+    }
+    
+    int npoints = floor(((fOrder +1)/2)+1);
+    VecDouble aux(npoints);
+    fPoints.resize(npoints, 1);
+    fWeights.resize(npoints);
+    gauleg(-1.,1.,aux,fWeights);
+    for (size_t i = 0; i < npoints; i++)
+    {
+        fPoints(i,0) = aux[i];
+    }
+    
+    //DebugStop();
 }
 
 void IntRule1d::gauleg(const double x1, const double x2, VecDouble &co, VecDouble &w){

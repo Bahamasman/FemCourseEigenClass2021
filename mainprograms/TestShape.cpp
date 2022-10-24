@@ -1,6 +1,7 @@
 
 ///\cond
 #include <iostream>
+#include <fstream>
 #include <math.h>
 ///\endcond
 #include "Geom0d.h"
@@ -20,7 +21,7 @@
 #include "NullStatement.h"
 
 #define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 using namespace Catch::literals;
 
 

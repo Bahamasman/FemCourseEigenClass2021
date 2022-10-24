@@ -121,7 +121,6 @@ void Poisson::Contribute(IntPointData &data, double weight, MatrixDouble &EK, Ma
 
     dphi2 = data.axes.transpose()*data.dphidx;
     dphi3 = dphi2.transpose();
-
     MatrixDouble perm(3, 3);
     perm = this->GetPermeability();
     double res = 0.;
@@ -134,10 +133,12 @@ void Poisson::Contribute(IntPointData &data, double weight, MatrixDouble &EK, Ma
         res = resloc[0];
     }
 
-    //+++++++++++++++++
-    // Please implement me
-    std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-    DebugStop();
+
+    EK += (dphi.transpose()* dphi + phi * phi.transpose() ) * weight;
+    //EK += (dphi.transpose() * dphi ) * weight;
+
+    EF += phi * res * weight;
+    
     //+++++++++++++++++
 }
 
