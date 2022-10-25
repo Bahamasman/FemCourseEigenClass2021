@@ -10,7 +10,7 @@
 
 /// computes the shape functions in function of the coordinate in parameter space and orders of the shape functions (size of orders is number of sides of the element topology)
 void ShapeTriangle::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, MatrixDouble &dphi){
-    
+    int nshape = NShapeFunctions(orders);
     for (int i = 0; i < orders.size(); i++)
     {
         if (orders[i] < 0) {
@@ -41,11 +41,32 @@ void ShapeTriangle::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, M
     dphi(0,2) =  0.;
     dphi(1,2) =  1.;
     
-    std::cout << "Please implement me\n";
+    // Order 2
+    
+    if (orders[nf-1] == 2) 
+    {
+        phi[3] =  4.* (phi[0] * phi[1]) ;
+        dphi(0, 3) = 4.*(dphi(0, 0) * phi[1] + phi[0] * dphi(0, 1));
+        dphi(1, 3) = 4.* (dphi(1, 0) * phi[1] + phi[0] * dphi(1, 1));
+           
+        phi[4] =   4.*(phi[1] * phi[2] ) ;
+        dphi(0, 4) =  4.*(dphi(0, 1) * phi[2] + phi[1] * dphi(0, 2));
+        dphi(1, 4) = 4.* (dphi(1, 1) * phi[2] + phi[1] * dphi(1, 2));
+    
+        phi[5] = 4.* (phi[0] * phi[2] );
+        dphi(0, 5) =4.* (dphi(0, 0) * phi[2] + phi[0] * dphi(0, 2));
+        dphi(1, 5) = 4.* (dphi(1, 0) * phi[2] + phi[0] * dphi(1, 2));
+    
+    }
+    
+    
+    for(int is = 6 ; is< nSides; is++) if(orders[is] != 1 && orders[is] != 2) DebugStop();
+}
+
    // DebugStop();
     
     
-}
+
 
 /// returns the number of shape functions associated with a side
 int ShapeTriangle::NShapeFunctions(int side, int order){

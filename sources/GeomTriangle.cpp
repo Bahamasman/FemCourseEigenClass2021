@@ -61,7 +61,7 @@ void GeomTriangle::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
     Shape(xi, phi, dphi);
     int space = NodeCo.rows();
 
-    for (int i = 0; i < NodeCo.rows(); i++) {
+    for (int i = 0; i < space; i++) {
         x[i] = 0.0;
         for (int j = 0; j < nCorners; j++) {
             x[i] += phi[j] * NodeCo(i, j);

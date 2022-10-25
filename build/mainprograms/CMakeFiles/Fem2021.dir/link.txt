@@ -1,0 +1,1 @@
+/usr/bin/g++  -g   CMakeFiles/Fem2021.dir/main2021.cpp.o  -o Fem2021  libcourse_library.a 

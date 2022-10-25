@@ -47,7 +47,7 @@ void Geom1d::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
     Shape(xi, phi, dphi);
     int space = NodeCo.rows();
 
-    for (int i = 0; i < NodeCo.rows(); i++) {
+    for (int i = 0; i < space; i++) {
         for (int j = 0; j < nCorners; j++) {
             x[i] += phi[j] * NodeCo(i, j);
         }
@@ -61,7 +61,7 @@ void Geom1d::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x, Matr
     if(x.size() != NodeCo.rows()) DebugStop();
     if(NodeCo.cols() != nCorners) DebugStop();
 
-    gradx.resize(2, 1);
+    gradx.resize(3, 3);
     gradx.setZero();
     x.resize(3);
     x.setZero();
@@ -72,7 +72,7 @@ void Geom1d::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x, Matr
     MatrixDouble dphi(Dimension, nCorners);
     Shape(xi, phi, dphi);
     for (int i = 0; i < nCorners; i++) {
-        for (int j = 0; j < NodeCo.rows(); j++) {
+        for (int j = 0; j < nrow; j++) {
             x[j] += NodeCo(j,i) * phi[i];
             gradx(j, 0) += NodeCo(j, i) * dphi(0, i);
             

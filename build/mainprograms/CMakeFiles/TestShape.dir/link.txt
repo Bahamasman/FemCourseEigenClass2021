@@ -1,0 +1,1 @@
+/usr/bin/g++  -g   CMakeFiles/TestShape.dir/TestShape.cpp.o  -o TestShape  libcourse_library.a ../_deps/catch2-build/src/libCatch2d.a libtest_library.a ../_deps/catch2-build/src/libCatch2d.a 

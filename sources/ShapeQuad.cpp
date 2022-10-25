@@ -54,7 +54,36 @@ void ShapeQuad::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, Matri
     dphi(0, 3) = 1./4. * (-1. - eta);
     dphi(1, 3) = 1./4. * (1. - qsi);
 
+    int count = 4;
+    int is;
+    for (is = 4; is < 8; is++) {
+        if(orders[is] == 2)
+        {
+            int is1 = SideNodeLocIndex(is, 0);
+            int is2 = SideNodeLocIndex(is, 1);
+            phi[is] = 4. *phi[is1] * phi[is2];
+            dphi(0, is) = 4. * (dphi(0, is1) * phi[is2] + phi[is1] * dphi(0, is2));
+            dphi(1, is) = 4. * (dphi(1, is1) * phi[is2] + phi[is1] * dphi(1, is2));
+            count++;
+        } else if (orders[is] != 1) DebugStop();
+    }
+    if(count < nshape){
+        if(orders[is] == 2)
+        {
+            int is1 = 0;
+            int is2 = 2;
+            phi[is] = 16. *phi[0] * phi[2];
+            dphi(0, is) = 16. * (dphi(0, is1) * phi[is2] + phi[is1] * dphi(0, is2));
+            dphi(1, is) = 16. * (dphi(1, is1) * phi[is2] + phi[is1] * dphi(1, is2));
+            count ++;
+        }
+
+    }
+    if(count != nshape) DebugStop();
+    for(int is = 8 ; is< nSides; is++) if(orders[is] != 1 && orders[is] != 2) DebugStop();
 }
+
+
 
 /// returns the number of shape functions associated with a side
 int ShapeQuad::NShapeFunctions(int side, int order){

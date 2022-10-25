@@ -46,7 +46,7 @@ int main ()
 #endif
     read.Read(gmesh,filename);
 
-    VTKGeoMesh::PrintGMeshVTK(&gmesh,"mygeomesh.vtk");
+    //VTKGeoMesh::PrintGMeshVTK(&gmesh,"mygeomesh.vtk");
 
     CompMesh cmesh(&gmesh);
     MatrixDouble perm(3,3);
