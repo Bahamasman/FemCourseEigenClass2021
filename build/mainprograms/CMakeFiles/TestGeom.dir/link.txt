@@ -1,1 +1,0 @@
-/usr/bin/g++  -g   CMakeFiles/TestGeom.dir/TestGeom.cpp.o  -o TestGeom  libcourse_library.a ../_deps/catch2-build/src/libCatch2d.a libtest_library.a ../_deps/catch2-build/src/libCatch2d.a 

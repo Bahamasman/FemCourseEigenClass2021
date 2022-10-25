@@ -1,1 +1,0 @@
-/usr/bin/g++  -g   CMakeFiles/Contribute.dir/mainContribute.cpp.o  -o Contribute  libcourse_library.a 

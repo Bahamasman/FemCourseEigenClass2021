@@ -1,1 +1,0 @@
-/usr/bin/g++  -g   CMakeFiles/TestEigen.dir/mainEigenTest.cpp.o  -o TestEigen  libcourse_library.a 

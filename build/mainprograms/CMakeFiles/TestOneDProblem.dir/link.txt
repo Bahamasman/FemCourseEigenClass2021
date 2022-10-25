@@ -1,1 +1,0 @@
-/usr/bin/g++  -g   CMakeFiles/TestOneDProblem.dir/TestOneDProblem.cpp.o  -o TestOneDProblem  libcourse_library.a 

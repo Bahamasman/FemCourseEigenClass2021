@@ -1,1 +1,0 @@
-/usr/bin/g++  -g   CMakeFiles/PostProcess.dir/mainPostProcess.cpp.o  -o PostProcess  libcourse_library.a 

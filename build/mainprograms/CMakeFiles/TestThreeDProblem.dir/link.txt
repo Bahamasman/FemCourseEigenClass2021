@@ -1,1 +1,0 @@
-/usr/bin/g++  -g   CMakeFiles/TestThreeDProblem.dir/TestThreeDProblem.cpp.o  -o TestThreeDProblem  libcourse_library.a 
