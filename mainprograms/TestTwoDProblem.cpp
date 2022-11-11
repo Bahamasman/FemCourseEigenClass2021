@@ -29,7 +29,7 @@ int main ()
 {
     GeoMesh gmesh;
     ReadGmsh read;
-    std::string filename("quads.msh");
+    std::string filename("quads1.msh");
 #ifdef MACOSX
     filename = "../"+filename;
 #endif
@@ -55,21 +55,24 @@ int main ()
     val2.setZero();
     L2Projection *bc_linha = new L2Projection(0,2,proj,val1,val2);
     L2Projection *bc_point = new L2Projection(0,3,proj,val1,val2);
+    // bc_linha->SetForceFunction(force);
+    // bc_point->SetForceFunction(force);
     std::vector<MathStatement *> mathvec = {0,mat1,bc_point,bc_linha};
     cmesh.SetMathVec(mathvec);
-    cmesh.SetDefaultOrder(1);
+    cmesh.SetDefaultOrder(2);
     cmesh.AutoBuild();
     cmesh.Resequence();
+    //cmesh.Print();
 
         Analysis locAnalysis(&cmesh);
     locAnalysis.RunSimulation();
     PostProcessTemplate<Poisson> postprocess;
-    auto exact = [](const VecDouble &x, VecDouble &val, MatrixDouble &deriv)
+   auto exact = [](const VecDouble &x, VecDouble &val, MatrixDouble &deriv)
     {
         val[0] = (1.-x[0])*x[0]*(1-x[1])*x[1];
         deriv(0,0) = (1.-2.*x[0])*(1-x[1])*x[1];
         deriv(1,0) = (1-2.*x[1])*(1-x[0])*x[0];
-    };
+    }; 
 
 //    if (!strcmp("Sol", name.c_str())) return ESol;
 //    if (!strcmp("DSol", name.c_str())) return EDSol;

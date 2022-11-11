@@ -61,7 +61,7 @@ void Geom1d::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x, Matr
     if(x.size() != NodeCo.rows()) DebugStop();
     if(NodeCo.cols() != nCorners) DebugStop();
 
-    gradx.resize(3, 3);
+    gradx.resize(NodeCo.rows(), 1);
     gradx.setZero();
     x.resize(3);
     x.setZero();

@@ -59,18 +59,18 @@ int main ()
     
     auto force = [](const VecDouble &x, VecDouble &res)
     {
-        res[0] = x[0];
+        res[0] = 1.;
     };
     mat1->SetForceFunction(force);
     MatrixDouble proj(1,1),val1(1,1),val2(1,1);
     proj.setZero();
     val1.setZero();
     val2.setZero();
-    L2Projection *bc_linha = new L2Projection(0,2,proj,val1,val2);
+    L2Projection *bc_linha = new L2Projection(1,2,proj,val1,val2);
     L2Projection *bc_point = new L2Projection(0,3,proj,val1,val2);
     std::vector<MathStatement *> mathvec = {0,mat1,bc_point,bc_linha};
     cmesh.SetMathVec(mathvec);
-    cmesh.SetDefaultOrder(1);
+    cmesh.SetDefaultOrder(2);
     cmesh.AutoBuild();
     cmesh.Resequence();
 
@@ -97,10 +97,10 @@ int main ()
 }
 void exact(const VecDouble &point,VecDouble &val, MatrixDouble &deriv){
 
-    //deriv(0,0) = 4-point[0];
-    //val[0]=point[0]*(8.-point[0])/2.;
-    deriv(0,0) = 1. - 8.*cosh(point[0])/sinh(8.);
-    val[0]=point[0] - 8.*sinh(point[0])/sinh(8.);
+    deriv(0,0) = 4.-point[0];
+    val[0]=point[0]*(8.-point[0])/2.;
+    // deriv(0,0) = 1. - 8.*cosh(point[0])/sinh(8.);
+    // val[0]=point[0] - 8.*sinh(point[0])/sinh(8.);
     
     return;
 }

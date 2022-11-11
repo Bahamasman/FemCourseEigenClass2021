@@ -12,6 +12,7 @@
 #include "VTKGeoMesh.h"
 #include "PostProcessTemplate.h"
 #include <Eigen/SparseLU>
+#include<Eigen/SparseCholesky>
 
 using namespace std;
 
@@ -71,13 +72,26 @@ void Analysis::RunSimulation() {
 
     std::cout << "Computing solution..." << std::endl;
     
-    SparseLU<SparseMat, COLAMDOrdering<int> >   solver;
+    std::cout << "K:" <<K << std::endl;
+    std::cout << "F:" <<F << std::endl;
+    //K = K.adjoint();
+    //SparseLU<SparseMat, COLAMDOrdering<int>> solver;
+    SimplicialLDLT<SparseMat,1, AMDOrdering<int>>   solver;
     // Compute the ordering permutation vector from the structural pattern of A
     solver.analyzePattern(K); 
     // Compute the numerical factorization 
     solver.factorize(K); 
+    //solver.compute(K);
+    if(solver.info()!=Eigen::Success) {
+        // decomposition failed
+        std::cout << "decomposition failed\n";
+    }
     //Use the factors to solve the linear system 
     Solution = solver.solve(F); 
+    if(solver.info()!=Success) {
+        // solving failed
+        return;
+    }
 
     std::cout << "Solution computed!" << std::endl;
     std::cout << "Solution: " << Solution  << std::endl;

@@ -67,44 +67,94 @@ void Assemble::Compute(SparseMat &globmat, MatrixDouble &rhs) {
         
         cel->CalcStiff(ek, ef);
         
-        
         int ndof = cel->NDOF();
-        int k = cel->NShapeFunctions();
-        
-        int icount = 0;
-        for (size_t idof = 0; idof < ndof; idof++)
-        {
-            DOF & dofi = cel->GetDOF(idof);
-            int64_t ifirst = dofi.GetFirstEquation();
-            int Neqi = dofi.GetNShape() * dofi.GetNState();
-            for (size_t i = 0; i < Neqi; i++)
-            {
-                rhs(ifirst+i,0) += ef(icount+i,0);
+        VecInt iglob(neq, 1);
+        int ni = 0;
+        for (int i = 0; i < ndof; i++) {
+            int dofindex = cel->GetDOFIndex(i);
+            DOF dof = cmesh->GetDOF(dofindex);
+            for (int j = 0; j < dof.GetNShape() * dof.GetNState(); j++) {
+                iglob[ni] = dof.GetFirstEquation() + j;
+                ni++;
             }
-            int jcount = 0;
-            for (size_t jdof = 0; jdof < ndof; jdof++)
-            {
-                DOF & dofj = cel->GetDOF(jdof);
-                int64_t jfirst = dofj.GetFirstEquation();
-                int Neqj = dofj.GetNShape() * dofj.GetNState();
-                for (size_t i = 0; i < Neqi; i++)
-                {
-                    for (size_t j = 0; j < Neqj; j++)
-                    {
-                        globmat.coeffRef(ifirst+i,jfirst+j) += ek(icount+i,jcount+j);
-                    }
-                    
-                }
-                jcount += Neqj;
-            }
-            icount += Neqi;
-            
         }
+        for (int i = 0; i < ek.rows(); i++) {
+            int IG = iglob[i];
+            rhs(IG, 0) += ef(i, 0);
+            for (int j = 0; j < ek.rows(); j++) {
+                int JG = iglob[j];
+                globmat.coeffRef(IG, JG) += ek(i, j);
+            }
+        }
+        // int ndof = cel->NDOF();
+        // int k = cel->NShapeFunctions();
         
+        // int icount = 0;
+        // for (size_t idof = 0; idof < ndof; idof++)
+        // {
+        //     DOF & dofi = cel->GetDOF(idof);
+        //     int64_t ifirst = dofi.GetFirstEquation();
+        //     int Neqi = dofi.GetNShape() * dofi.GetNState();
+        //     for (size_t i = 0; i < Neqi; i++)
+        //     {
+        //         rhs(ifirst+i,0) += ef(icount+i,0);
+        //     }
+        //     int jcount = 0;
+        //     for (size_t jdof = 0; jdof < ndof; jdof++)
+        //     {
+        //         DOF & dofj = cel->GetDOF(jdof);
+        //         int64_t jfirst = dofj.GetFirstEquation();
+        //         int Neqj = dofj.GetNShape() * dofj.GetNState();
+        //         for (size_t i = 0; i < Neqi; i++)
+        //         {
+        //             for (size_t j = 0; j < Neqj; j++)
+        //             {
+        //                 globmat.coeffRef(ifirst+i,jfirst+j) += ek(icount+i,jcount+j);
+        //             }
+                    
+        //         }
+        //         jcount += Neqj;
+        //     }
+        //     icount += Neqi;
+            
+        // }
+        //std::cout << "Matriz Global :" << globmat << std::endl;
+        // std::cout << "{" ;
+        // for (size_t i = 0; i < globmat.rows(); i++)
+        // {
+        //     std::cout << "{" ;
+        //     for (size_t j = 0; j < globmat.cols(); j++)
+        //     {
+        //         std::cout << globmat.coeffRef(i,j);
+        //         if (j+1 != globmat.cols())
+        //         {
+        //             std::cout << ",";
+        //         }
+                
+        //     }
+        //     std::cout << "}" << std::endl;
+        //     if (i+1 != globmat.rows())
+        //         {
+        //             std::cout << ",";
+        //         }
+        // }
+        // std::cout << "}"<< std::endl ;
+        //std::cout << "RHS :" << rhs << std::endl;
+        //  std::cout << "{" ;
+        // for (size_t i = 0; i < rhs.rows(); i++)
+        // {
+            
+        //     std::cout << rhs(i);
+        //     if (i+1 != rhs.rows())
+        //         {
+        //             std::cout << ",";
+        //         }
+                
+        // }
+        // std::cout << "}"<< std::endl ;
         
         //DebugStop();
         //+++++++++++++++++
     }
-    std::cout << "Matriz Global :" << globmat << std::endl;
-    std::cout << "RHS :" << rhs << std::endl;
+    
 }

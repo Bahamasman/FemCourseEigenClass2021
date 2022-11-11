@@ -71,6 +71,14 @@ void L2Projection::Contribute(IntPointData &data, double weight, MatrixDouble &E
 
     VecDouble result(nstate);
     result[0] = Val2()(0,0);
+    auto force = this->GetForceFunction();
+    if(force)
+   {
+       VecDouble resloc(1);
+       force(data.x, resloc);
+       result[0] = resloc[0];
+   }
+
     MatrixDouble deriv(data.x.size(), nstate);
     deriv.setZero();
     VecDouble phi = data.phi;
@@ -81,29 +89,33 @@ void L2Projection::Contribute(IntPointData &data, double weight, MatrixDouble &E
     }
 
     //+++++++++++++++++
-
-
+///std::cout << "Phi: " << phi << std::endl;
     switch (this->GetBCType()) {
 
         case 0:
         {
             for (size_t i = 0; i < nshape; i++)
             {
-                EF(i,0)= gBigNumber * phi[i] * result[0] * weight;
+                EF(i,0)+= gBigNumber * phi[i] * result[0] * weight;
                 for (size_t j = 0; j < nshape; j++)
                 {
-                    EK(i,j)= gBigNumber * phi[i] * phi[j] * weight;
+                    EK(i,j)+= gBigNumber * phi[i] * phi[j] * weight;
                 }
                 
             }
-            
+            //std::cout << "EK: " << EK << std::endl;
+            //std::cout << "EF: " << EF << std::endl;
             break;
         }
 
         case 1:
         {
-            std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-            DebugStop();
+            for (size_t i = 0; i < nshape; i++)
+            {
+                EF(i,0)=  phi[i] * result[0] * weight;
+                
+            }
+            //DebugStop();
             // Your code here
             break;
         }
