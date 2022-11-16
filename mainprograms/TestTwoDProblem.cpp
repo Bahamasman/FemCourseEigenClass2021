@@ -29,7 +29,7 @@ int main ()
 {
     GeoMesh gmesh;
     ReadGmsh read;
-    std::string filename("quads1.msh");
+    std::string filename("Frigideira.msh");
 #ifdef MACOSX
     filename = "../"+filename;
 #endif
@@ -42,22 +42,25 @@ int main ()
     perm(1,1) = 1.;
     perm(2,2) = 1.;
     Poisson *mat1 = new Poisson(1,perm);
+    Poisson *mat2 = new Poisson(1,perm);
     mat1->SetDimension(2);
+    mat2->SetDimension(2);
 
     auto force = [](const VecDouble &x, VecDouble &res)
     {
         res[0] = 2.*(1.-x[0])*x[0]+2.*(1-x[1])*x[1];
     };
     mat1->SetForceFunction(force);
+    mat2->SetForceFunction(force);
     MatrixDouble proj(1,1),val1(1,1),val2(1,1);
     proj.setZero();
     val1.setZero();
     val2.setZero();
-    L2Projection *bc_linha = new L2Projection(0,2,proj,val1,val2);
-    L2Projection *bc_point = new L2Projection(0,3,proj,val1,val2);
+    L2Projection *bc_pan = new L2Projection(0,1,proj,val1,val2);
+    L2Projection *bc_cab = new L2Projection(1,2,proj,val1,val2);
     // bc_linha->SetForceFunction(force);
     // bc_point->SetForceFunction(force);
-    std::vector<MathStatement *> mathvec = {0,mat1,bc_point,bc_linha};
+    std::vector<MathStatement *> mathvec = {0,mat1,mat2,bc_pan,bc_cab};
     cmesh.SetMathVec(mathvec);
     cmesh.SetDefaultOrder(2);
     cmesh.AutoBuild();
@@ -88,7 +91,7 @@ int main ()
     postprocess.AppendVariable("DSolExact");
     postprocess.SetExact(exact);
     mat1->SetExactSolution(exact);
-    locAnalysis.PostProcessSolution("quads.vtk", postprocess);
+    locAnalysis.PostProcessSolution("frigideira.vtk", postprocess);
 
     VecDouble errvec;
     errvec = locAnalysis.PostProcessError(std::cout, postprocess);

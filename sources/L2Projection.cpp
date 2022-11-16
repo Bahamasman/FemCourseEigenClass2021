@@ -112,7 +112,7 @@ void L2Projection::Contribute(IntPointData &data, double weight, MatrixDouble &E
         {
             for (size_t i = 0; i < nshape; i++)
             {
-                EF(i,0)=  phi[i] * result[0] * weight;
+                EF(i,0)+=  phi[i] * result[0] * weight;
                 
             }
             //DebugStop();

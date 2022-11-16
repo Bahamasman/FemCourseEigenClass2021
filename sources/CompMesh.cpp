@@ -73,7 +73,12 @@ CompElement *CompMesh::GetElement(int64_t elindex) const {
     return compelements[elindex];
 }
 
-MathStatement *CompMesh::GetMath(int matindex) const {
+MathStatement *CompMesh::GetMath(int matindex) const { 
+    if (matindex < 0 || matindex >= mathstatements.size()|| !mathstatements[matindex])
+    {
+        DebugStop();
+    }
+    
     return mathstatements[matindex];
 }
 
