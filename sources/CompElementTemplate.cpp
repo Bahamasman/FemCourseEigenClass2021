@@ -28,7 +28,10 @@ CompElementTemplate<Shape>::CompElementTemplate(int64_t ind, CompMesh *cmesh, Ge
     nel = cmesh->GetElementVec().size();
     cmesh->SetNumberElement(nel);
     cmesh->SetElement(ind, this);
-    intrule.SetOrder(2 * cmesh->GetDefaultOrder());
+    if(this->Dimension()==0)
+        intrule.SetOrder(0);
+    else
+        intrule.SetOrder(2 * cmesh->GetDefaultOrder());
     this->SetIntRule(&intrule);
     this->SetIndex(ind);
     this->SetCompMesh(cmesh);
@@ -125,6 +128,7 @@ void CompElementTemplate<Shape>::GetMultiplyingCoeficients(VecDouble & coefs) co
     for (int64_t i = 0; i < ndof; i++) {
         int dofindex = dofindexes[i];
         class DOF dof = this->GetCompMesh()->GetDOF(dofindex);
+        //dof.SetFirstEquation(i);
         int dof_first = dof.GetFirstEquation();
         int dof_neq = dof.GetNShape()*dof.GetNState();
         for (int j = 0; j < dof_neq; j++) {

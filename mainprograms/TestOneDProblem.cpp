@@ -38,6 +38,7 @@ void exact(const VecDouble &point,VecDouble &val, MatrixDouble &deriv);
 
 int main ()
 {
+//Creation of the geometric mesh and fill geometric proprities using gmsh file
     GeoMesh gmesh;
     ReadGmsh read;
     std::string filename("oneD.msh");
@@ -47,7 +48,7 @@ int main ()
     read.Read(gmesh,filename);
 
     //VTKGeoMesh::PrintGMeshVTK(&gmesh,"mygeomesh.vtk");
-
+//Create of the computation mesh and Poisson mathstatement with matid 1
     CompMesh cmesh(&gmesh);
     MatrixDouble perm(3,3);
     perm.setZero();
@@ -57,31 +58,35 @@ int main ()
     Poisson *mat1 = new Poisson(1,perm);
     mat1->SetDimension(1);
     
+//Known function of our diferential equation that is atribbuted to the charge vector
     auto force = [](const VecDouble &x, VecDouble &res)
     {
         res[0] = 1.;
     };
     mat1->SetForceFunction(force);
+    
+//Setting Boundary Condition using L2 Projetction
     MatrixDouble proj(1,1),val1(1,1),val2(1,1);
     proj.setZero();
     val1.setZero();
     val2.setZero();
-    L2Projection *bc_linha = new L2Projection(1,2,proj,val1,val2);
+    L2Projection *bc_linha = new L2Projection(0,2,proj,val1,val2);
     L2Projection *bc_point = new L2Projection(0,3,proj,val1,val2);
-    std::vector<MathStatement *> mathvec = {0,mat1,bc_point,bc_linha};
+
+//Setting all of the mathstatement of the problem on the computational mesh, including boundary conditions
+    std::vector<MathStatement *> mathvec = {0,mat1,bc_linha,bc_point};
     cmesh.SetMathVec(mathvec);
-    cmesh.SetDefaultOrder(2);
+    cmesh.SetDefaultOrder(1);
     cmesh.AutoBuild();
     cmesh.Resequence();
 
-    
-    
+//Cretion of the Analysis and running the simulation, which envolves Assemble() and Solve()
     Analysis AnalysisLoc(&cmesh);
     AnalysisLoc.RunSimulation();
     
+//Error PostProcessing
     PostProcessTemplate<Poisson> postprocess;
     postprocess.SetExact(exact);
-    
     VecDouble errvec;
     errvec = AnalysisLoc.PostProcessError(std::cout, postprocess);
     

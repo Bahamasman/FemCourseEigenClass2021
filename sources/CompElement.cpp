@@ -173,7 +173,7 @@ void CompElement::CalcStiff(MatrixDouble &ek, MatrixDouble &ef) const {
     MathStatement *material = this->GetStatement();
     if (!material) {
         std::cout << "Error at CompElement::CalcStiff" << std::endl;
-        return;
+        DebugStop();
     }
     // Second, you should clear the matrices you're going to compute
     ek.setZero();
@@ -191,12 +191,12 @@ void CompElement::CalcStiff(MatrixDouble &ek, MatrixDouble &ef) const {
     double weight = 0.;
 
     for (int nint = 0; nint < nintpoints; nint++) {
-        intrule->Point(nint, data.ksi, weight);
+        intrule->Point(nint, data.ksi, data.weight);
         this->ComputeRequiredData(data, data.ksi);
-        weight *= fabs(data.detjac);
-        this->GetMultiplyingCoeficients(data.coefs);
-        data.ComputeSolution();
-        material->Contribute(data, weight, ek, ef);
+        data.weight *= fabs(data.detjac);
+       // this->GetMultiplyingCoeficients(data.coefs);
+        //data.ComputeSolution();
+        material->Contribute(data, data.weight, ek, ef);
     }
 
 }
@@ -263,6 +263,7 @@ void CompElement::Solution(VecDouble &intpoint, int var, VecDouble &sol) const {
     this->InitializeIntPointData(data);
     this->ComputeRequiredData(data, intpoint);
     this->GetMultiplyingCoeficients(data.coefs);
+    //std::cout << "data.coefs = " << data.coefs << std::endl;
     data.ComputeSolution();
     
     material->PostProcessSolution(data, var, sol);

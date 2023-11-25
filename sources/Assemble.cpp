@@ -66,7 +66,7 @@ void Assemble::Compute(SparseMat &globmat, MatrixDouble &rhs) {
         ef.setZero();
         
         cel->CalcStiff(ek, ef);
-        
+        std::cout << "EK: " << ek << std::endl;
         int ndof = cel->NDOF();
         VecInt iglob(neq, 1);
         int ni = 0;

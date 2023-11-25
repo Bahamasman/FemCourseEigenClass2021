@@ -36,7 +36,9 @@ void IntRuleQuad::SetOrder(int order) {
         fPoints(i,0) = aux[i];
         fPoints(i,1) = aux[i+ npoints*npoints];
     }
-   
+//    std::cout << fOrder << std::endl<< std::endl;
+//    std::cout << fPoints << std::endl<< std::endl;
+//    std::cout << fWeights << std::endl<< std::endl;
 
 }
 
